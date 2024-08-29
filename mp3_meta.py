@@ -126,9 +126,16 @@ class Mp3App(ft.UserControl): #uiを構築
             if selected_file.name.endswith('.mp3'):
                 self.selected_mp3 = selected_file.path
                 self.mp3_name_t.value = f"{selected_file.name}"
+                #テキストフィールドにタイトルとトラック番号を追加
+                audio = MP3(self.selected_mp3, ID3=ID3)
+                if "TIT2" in audio.tags:
+                    self.edit_ti.value = audio.tags["TIT2"].text[0]
+                if "TRCK" in audio.tags:
+                    self.edit_tr.value = audio.tags["TRCK"].text[0]
             elif selected_file.name.endswith('.png'):
                 self.selected_png = selected_file.path
                 self.png_name_t.value = f"{selected_file.name}"
+
         await self.update_async()
 
     #タブが変更されたときに呼び出し
@@ -194,6 +201,8 @@ class Mp3App(ft.UserControl): #uiを構築
         except Exception as ex:
             self.cover_log.value = f"エラーが発生しました: {ex}"
         await self.update_async()
+
+
 
 #GUIの構築
 async def main(page: ft.Page):
